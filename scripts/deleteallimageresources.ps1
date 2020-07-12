@@ -1,12 +1,4 @@
-$currentAzContext = Get-AzContext
-
-$subscriptionID = $currentAzContext.Subscription.Id
-$imageResourceGroup = "aibwinsig"
-$location = "westeurope"
-$runOutputName = "aibCustWinManImg02ro"
-$imageTemplateName = "helloImageTemplateWin02ps"
-$runOutputName = "winclientR01"
-
+. .\parameters.ps1
 
 $resTemplateId = Get-AzResource -ResourceName $imageTemplateName -ResourceGroupName $imageResourceGroup -ResourceType Microsoft.VirtualMachineImages/imageTemplates -ApiVersion "2019-05-01-preview"
 

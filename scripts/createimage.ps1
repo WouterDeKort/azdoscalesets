@@ -1,25 +1,10 @@
-$currentAzContext = Get-AzContext
-
-$subscriptionID = $currentAzContext.Subscription.Id
-$imageResourceGroup = "aibwinsig"
-$location = "westeurope"
-$runOutputName = "aibCustWinManImg02ro"
-$imageTemplateName = "helloImageTemplateWin02ps"
-$runOutputName = "winclientR01"
+ . .\parameters.ps1
 
 # Create a resource group for Image Template and Shared Image Gallery
 New-AzResourceGroup `
     -Name $imageResourceGroup `
     -Location $location `
     -Force
- 
-# setup role def names, these need to be unique
-$timeInt = $(get-date -UFormat "%s")
-$imageRoleDefName = "Azure Image Builder Image Def" + $timeInt
-$identityName = "aibIdentity" + $timeInt
-
-## Add AZ PS module to support AzUserAssignedIdentity
-# Install-Module -Name Az.ManagedServiceIdentity
 
 # create identity
 New-AzUserAssignedIdentity -ResourceGroupName $imageResourceGroup -Name $identityName
@@ -42,17 +27,6 @@ New-AzRoleDefinition -InputFile  ./aibRoleImageCreation.json
 
 # grant role definition to image builder service principal
 New-AzRoleAssignment -ObjectId $identityNamePrincipalId -RoleDefinitionName $imageRoleDefName -Scope "/subscriptions/$subscriptionID/resourceGroups/$imageResourceGroup"
-
-### NOTE: If you see this error: 'New-AzRoleDefinition: Role definition limit exceeded. No more role definitions can be created.' See this article to resolve: https://docs.microsoft.com/azure/role-based-access-control/troubleshooting
-
-# Image gallery name
-$sigGalleryName = "myIBSIG"
-
-# Image definition name
-$imageDefName = "winSvrimage"
-
-# additional replication region
-$replRegion2 = "northeurope"
 
 # Create the gallery
 New-AzGallery `
