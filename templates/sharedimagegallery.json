@@ -1,0 +1,67 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "parameters": {
+        "galleryName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the shared image gallery."
+            }
+        },
+        "galleryImageDefinitionName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the image definition stored in the shared image gallery."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The location of the shared image gallery."
+            }
+        },
+        "description": {
+            "type": "string",
+            "metadata": {
+                "description": "The description of the shared image gallery."
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/galleries",
+            "name": "[parameters('galleryName')]",
+            "apiVersion": "2018-06-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "description": "[parameters('description')]"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/galleries/images",
+            "name": "[concat(parameters('galleryName'), '/', parameters('galleryImageDefinitionName'))]",
+            "apiVersion": "2019-12-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "description": "Sample Gallery Image Description",
+                "osType": "Windows",
+                "osState": "Generalized",
+                "identifier": {
+                    "publisher": "Wouter de Kort",
+                    "offer": "Azure Pipelines",
+                    "sku": "win2019-datacenter"
+                },
+                "recommended": {
+                    "vCPUs": {
+                        "min": "1",
+                        "max": "64"
+                    },
+                    "memory": {
+                        "min": "2048",
+                        "max": "307720"
+                    }
+                }
+            }
+        }
+    ]
+}
